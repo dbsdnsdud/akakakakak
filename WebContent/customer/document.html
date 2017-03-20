@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+</style>
+<script>
+	/* -------------------------------------------------------------------------------- */
+	
+	window.addEventListener("load", function(e) {
+		
+		var p1 = document.getElementById("p1");
+		var runButton = document.getElementById("run-button");
+		
+		runButton.onclick = function(){
+			var inputs = document.querySelectorAll("#p1 > input");
+			for(var i in inputs)
+				inputs[i].value = "ㅇㅇㅇ"+(i+1);
+			
+			//태그명으로 찾을 수 있다.
+			/* var inputs = p1.getElementsByTagName("input");
+			inputs[0].value = "오케바리"; */
+			
+			//p1.parentNode.innerText = "오마이";
+			
+			//alert(p1.previousSibling.nodeType);
+			//alert(p1.previousSibling.nodeName);
+		
+		};
+		
+	});
+	
+	/* -------------------------------------------------------------------------- */
+	
+	window.addEventListener("load", function(e) {
+		var srcText = document.querySelector("#src-text");
+		var borderText = document.querySelector("#border-text");
+		var borderColor = document.querySelector("#border-color");
+		var borderWidth = document.querySelector("#border-width");
+		var borderStyle = document.querySelector("#border-style");
+		var changeButton = document.querySelector("#change-button");
+		var img1 = document.querySelector("#img1");
+		
+		
+		
+		changeButton.onclick = function() {
+			img1.src = "images/" + srcText.value;
+			img1.style.border = borderText.value;
+			/* img1.style.border["border-color"] = borderText.value; */
+			img1.style.borderColor = borderColor.value;
+			img1.style.borderWidth = borderWidth.value;
+			img1.style.borderStyle = borderStyle.value;
+			
+		};
+	});
+	
+	/* -------------------------------------------------------------------------- */
+	
+	window.addEventListener("load", function(e) {
+		var addButton = document.querySelector("#add-button");
+		var delButton = document.querySelector("#del-button");
+		var cloneButton = document.querySelector("#clone-button");
+		var downButton = document.querySelector("#down-button");
+		var container = document.querySelector("#container"); 
+		var cursor = document.querySelector("#cursor");
+		
+		addButton.onclick = function(){
+			var img = document.createElement("img");
+			
+			// 이미지 속성 & 스타일 설정
+			img.src = "images/twice.jpg"
+			img.style.width = "200px";
+				
+			// 노드를 Document에 추가하기 (Document Object Model)
+			// Document만 create기능이 있다.
+			container.appendChild(img);
+			
+		};
+		
+		delButton.onclick = function(){
+			var last = container.querySelector("img:last-child");
+			
+			container.removeChild(last);
+		
+		}
+		
+		cloneButton.onclick = function(){
+			var clone = container.cloneNode(true);
+			
+			// container의 부모를 찾아서 .appendChild(clone);
+			container.parentNode.appendChild(clone);
+		}
+		
+		downButton.onclick = function(){
+			var parent = container.parentElement;
+			var target = cursor.nextElementSibling; // 커서 다음 녀석
+			
+			var old = parent.replaceChild(cursor, target);
+			parent.insertBefore(old, cursor);
+			
+		}
+		
+	});
+	
+	/* -------------------------------------------------------------------------- */
+	
+	
+</script>
+
+</head>
+<body>
+	<input id="add-button" type="button" value="이미지 추가" />
+	<input id="del-button" type="button" value="이미지 삭제" />
+	<input id="clone-button" type="button" value="통째로 복제" />
+	<input id="down-button" type="button" value="밑으로 내리기" />
+	<div>
+		<div id="cursor">바뀔놈</div>
+		<div id="container"></div>
+	</div>
+	<hr />
+	images/
+	<input id="src-text" value="../js/images/twice.jpg" />
+	<br /> 경계선 :
+	<input id="border-text" value="3px solid #979797" />
+	<br /> 경계선 색:
+	<input id="border-color" value="#979797" />
+	<br /> 경계선 두께:
+	<input id="border-width" value="3px" />
+	<br /> 경계선 스타일:
+	<input id="border-style" value="solid" />
+	<br />
+	<input id="change-button" type="button" value="변경" />
+	<img id="img1" src="../js/images/twice.jpg" />
+
+	<hr />
+	<input id="run-button" type="button" value="실행" />
+	<div>
+		<font>font</font> <input />
+	</div>
+	<form id="p1">
+		test1 <input /> <input />
+	</form>
+	test2
+	<p>para</p>
+	hello
+	<!-- 오마이 갓 뚜-->
+</body>
+</html>

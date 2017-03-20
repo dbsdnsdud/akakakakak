@@ -1,3 +1,4 @@
+
 <%@page import="org.apache.jasper.tagplugins.jstl.core.ForEach"%>
 <%@page import="com.newlecture.web.data.view.NoticeView"%>
 <%@page import="java.util.List"%>
@@ -42,31 +43,113 @@
 <script>
 	window.addEventListener("load", function(e) {
 		
-		var moreButton = document.querySelector("#more-button");
+		var regButton = document.querySelector("#reg-button");
+		var moreButton = document.querySelector("#more-button"); 
+			
+		regButton.onclick = function(){
 
-		var notices = [
+			var request = new window.XMLHttpRequest();
+			request.open("GET" ,"notice-reg-partial.jsp", true); 
+			//request.onreadystatechange = function(){
+			request.onload = function(){
+				var form = request.responseText;
+				document.body.innerHTML += form;
+
+			};
+			request.send();
+
+			return false;
+
+			//event.preventDefault();
+
+			//alert("hello");
+
+			//return false;
+		};
+
+		/* var notices = [
 			{code:"1", title:"오오오"},
 			{code:"2", title:"요요요"},
 			{code:"3", title:"유유유"}
-		];
+		]; */
 		
-		
+		/*var a = function(){};
+		moreButton.addEventListener("click", a);
+		moreButton.removeEventListener("click", a);
+		moreButton.textContent = "처리중...";*/
+
 		moreButton.onclick = function(){
+			
+			/* var temp = "3+4";			
+			var x = eval(temp); */
+			
+			/* eval("var x = 5+4");
+			alert(x); */
+			
+			//var data = eval('[{code:"1", title:"오오오1asdf"},{code:"2", title:"요요요2asdf"},{code:"3", title:"우우우3asdf"}]');
+			// -> 다른 언어에선 eval이 없기 때문에 JSON을 써야한다 (JSON을 쓰려면 "" 을 다 해줘야 한다)
+			//var data = JSON.parse('[{"code":"1", "title":"오오오1asdf"},{"code":"2", "title":"요요요2asdf"},{"code":"3", "title":"우우우3asdf"}]');
+			
+			//var data = JSON.parse();
+			//alert(data[1].title);
+		
+			//var request = new ActiveXObject("Microsoft.XMLHTTP"); 모든 브라우져에서 실행시키기 위해서는 밑의 방법이 더 바람직하다.
+			var request = new window.XMLHttpRequest();
+			//request.open("GET" ,"ajax-data.jsp?p=2", false); // false 동기형
+			request.open("GET" ,"ajax-data.jsp?p=2", true); // true 비동기형 // 함수 단위로 위임할 수 있다.
+			//request.onreadystatechange = function(){
+			request.onload = function(){
+				//if(request.readyState == 4){ ==> onload로 하면 if문이 필요없다.
+					var notices = JSON.parse(request.responseText);
+				
+					var template = document.querySelector("#notice-row");
+					
+					for(var i in notices){
+						var tbody = document.querySelector(".notice-table tbody");
+						var tds = template.content.querySelectorAll("td");
+
+						tds[0].innerText = notices[i].code;
+						tds[1].innerText = notices[i].title;
+						
+						var clone = document.importNode(template.content, true);
+						tbody.appendChild(clone); 
+					}; 
+					
+					document.body.removeChild(screen); 
+				//}
+			};	
+			request.send();
+			
+			var screen = document.createElement("div");
+			screen.style.width = "100%";
+			screen.style.height = "100%";
+			screen.style.position = "fixed";
+			screen.style.left = "0px";
+			screen.style.top = "0px";
+			screen.style.background = "#000";
+			screen.style.opacity = "0.5";
+			
+			document.body.appendChild(screen);
+			
+			
+			/* var notices = JSON.parse(request.responseText);
+			
 			var template = document.querySelector("#notice-row");
 			
 			for(var i in notices){
 				var tbody = document.querySelector(".notice-table tbody");
 				var tds = template.content.querySelectorAll("td");
-				
+
 				tds[0].innerText = notices[i].code;
 				tds[1].innerText = notices[i].title;
 				
 				var clone = document.importNode(template.content, true);
-				tbody.appendChild(clone);
-			};
+				tbody.appendChild(clone);  */
 		};
 	});
 </script>
+
+
 
 </head>
 <body>
@@ -204,7 +287,7 @@
 
 			<div class="notice">
 				<h3 class="hidden">공지목록</h3>
-				
+
 				<table class="table notice-table">
 					<thead>
 						<tr>
@@ -217,7 +300,7 @@
 					</thead>
 
 					<tbody>
-					<template id="notice-row">
+						<template id="notice-row">
 						<tr>
 							<td></td>
 							<td></td>
@@ -225,13 +308,13 @@
 							<td></td>
 							<td></td>
 						</tr>
-					</template>
+						</template>
 						<%
 							for (NoticeView v : list) {
 						%>
 						<tr>
 							<td><%=v.getCode()%></td>
-							<td><a href="notice-detail.jsp?c=<%=v.getCode()%> "><%=v.getTitle()%></td>
+							<td><%=v.getTitle()%></td>
 							<td><%=v.getWriter()%></td>
 							<td><%=v.getRegDate()%></td>
 							<td><%=v.getHit()%></td>
@@ -274,7 +357,7 @@
 			</div>
 
 			<div>
-				<a href="notice-reg.jsp">글쓰기</a>
+				<a id="reg-button" href="notice-reg.jsp">글쓰기</a> 
 				<span id="more-button">더보기</span>
 			</div>
 			</main>

@@ -4,69 +4,22 @@
 <%@page import="com.newlecture.web.dao.mysql.MySQLNoticeDao"%>
 <%@page import="com.newlecture.web.data.dao.NoticeDao"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+    pageEncoding="UTF-8"%>
 
-<%
-	// .../notice.jsp?p=5 -->  ==>> .../notice.jsp?p=5&?&? (3가지가 필요!)
-	String _page = request.getParameter("p");
-	String _field = request.getParameter("f");
-	String _query = request.getParameter("q");
-
-	int pg = 1;
-	String field = "TITLE";
-	String query = "";
-
-	if (_page != null && !_page.equals("")) //값이 넘겨진 것이 있다면 && 
-		pg = Integer.parseInt(_page);
-
-	if (_field != null && !_field.equals("")) //값이 넘겨진 것이 있다면 && 
-		field = _field;
-
-	if (_query != null && !_query.equals("")) //값이 넘겨진 것이 있다면 && 
-		query = _query;
+<% 
+	String code = request.getParameter("c");
 
 	NoticeDao noticeDao = new MySQLNoticeDao();
-	List<NoticeView> list = noticeDao.getList(pg, field, query);
-
-	int size = noticeDao.getSize(field, query);
-%>
-
+	NoticeView n = noticeDao.get(code);
+%>    
+    
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>으갹갹갹</title>
-<link href="../css/customer/style.css" type="text/css" rel="stylesheet" />
+<link href="../css/customer/style.css" type="text/css" rel="stylesheet"/>
 <script src="../js/customer/notice.js"> </script>
-
-<script>
-	window.addEventListener("load", function(e) {
-		
-		var moreButton = document.querySelector("#more-button");
-
-		var notices = [
-			{code:"1", title:"오오오"},
-			{code:"2", title:"요요요"},
-			{code:"3", title:"유유유"}
-		];
-		
-		
-		moreButton.onclick = function(){
-			var template = document.querySelector("#notice-row");
-			
-			for(var i in notices){
-				var tbody = document.querySelector(".notice-table tbody");
-				var tds = template.content.querySelectorAll("td");
-				
-				tds[0].innerText = notices[i].code;
-				tds[1].innerText = notices[i].title;
-				
-				var clone = document.importNode(template.content, true);
-				tbody.appendChild(clone);
-			};
-		};
-	});
-</script>
 
 </head>
 <body>
@@ -82,8 +35,8 @@
 				<h1 class="hidden">header</h1>
 				<!-- 스타일에는  세미콜론 써주기!-->
 				<nav id="main-menu" class="hr-menu">
-					<h1 class="">
-						메인메뉴 <input type="button" value="클릭" id="btn-result" />
+					<h1 class="">메인메뉴
+						<input type="button" value="클릭" id="btn-result" />
 					</h1>
 					<ul>
 						<!-- ul,ol,dl -->
@@ -169,115 +122,52 @@
 
 
 			<main id="main"> <!-- <section id="quick-menu">
-					<h2>퀵메뉴</h2>
-				</section> -->
-			<h2 class="main-title">
-				공지사항[<%=size%>]
-			</h2>
-			<div class="breadcrumb">
-				<h3 class="hidden">breadcrumb</h3>
-				<ul>
-					<li>home</li>
-					<li>고객센터</li>
-					<li>공지사항</li>
-				</ul>
-			</div>
-
-			<div>
-				<h3 class="hidden">과정 검색 폼</h3>
-				<form class="main-margin">
-					<fieldset>
-						<legend class="hidden">검색필드</legend>
-						<label class="hidden">검색분류</label> <select name="f">
-							<option value="TITLE" <%if (field.equals("TITLE")) {%> selected
-								<%}%>>제목</option>
-							<option value="CONTENT" <%if (field.equals("CONTENT")) {%>
-								selected <%}%>>내용</option>
-						</select> <label class="hidden">검색어</label> <input name="q" type="text"
-							value="<%=query%>" placeholder="검색어를 입력하세요" /> <input
-							class="btn btn-search" type="submit" value="검색" /> <input
-							type="hidden" name="p" value="1" />
-					</fieldset>
-				</form>
-
-			</div>
-
-			<div class="notice">
-				<h3 class="hidden">공지목록</h3>
+						<h2>퀵메뉴</h2>
+					</section> -->
+				<h2 class="main-title">공지사항 내용</h2>
+				<div class="breadcrumb">
+					<h3 class="hidden">breadcrumb</h3>
+					<ul>
+						<li>home</li>
+						<li>고객센터</li>
+						<li>공지사항</li>
+					</ul>
+				</div>
 				
-				<table class="table notice-table">
-					<thead>
-						<tr>
-							<td>번호</td>
-							<td>제목</td>
-							<td>작성자</td>
-							<td>작성일</td>
-							<td>조회수</td>
-						</tr>
-					</thead>
-
-					<tbody>
-					<template id="notice-row">
-						<tr>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-							<td></td>
-						</tr>
-					</template>
-						<%
-							for (NoticeView v : list) {
-						%>
-						<tr>
-							<td><%=v.getCode()%></td>
-							<td><a href="notice-detail.jsp?c=<%=v.getCode()%> "><%=v.getTitle()%></td>
-							<td><%=v.getWriter()%></td>
-							<td><%=v.getRegDate()%></td>
-							<td><%=v.getHit()%></td>
-						</tr>
-						<%
-							}
-						%>
-					</tbody>
-				</table>
-			</div>
-			<%
-				int last = (size % 10) > 0 ? size / 10 + 1 : size / 10;
-			%>
-			<div class="margin"><%=pg%>/<%=last%>
-				pages
-			</div>
-			<!-- 제목도, 목록도, 문장도, 폼도, 표도 아니면 모두 div -->
-			<div class="margin">
-				<div>
-					<a href="">이전</a>
-				</div>
-				<ul>
-					<%
-						for (int i = 0; i < last; i++) {
-					%>
-					<li><a href="?p=<%=i + 1%>&f=<%=field%>&q=<%=query%>"><%=i + 1%></a></li>
-					<%
-						}
-					%>
-					<%-- 
-					<li><a href="?p=2&f=<%=field %>&q=<%=query %>">2</a></li>
-					<li><a href="?p=3&f=<%=field %>&q=<%=query %>">3</a></li>
-					<li><a href="?p=4&f=<%=field %>&q=<%=query %>">4</a></li>
-					<li><a href="?p=5&f=<%=field %>&q=<%=query %>">5</a></li>
-					 --%>
-				</ul>
-				<div>
-					<a href="">다음</a>
-				</div>
-			</div>
-
-			<div>
-				<a href="notice-reg.jsp">글쓰기</a>
-				<span id="more-button">더보기</span>
-			</div>
+				<form action="notice-edit-proc.jsp" method="post">
+					<table border="1">
+						<tbody>
+							<tr>
+								<th>제목</th>
+								<td><input name="title" type="text" value="<%=n.getTitle() %>" /></td>
+							</tr>
+							<tr>
+								<th>작성자</th>
+								<td><%=n.getWriter()%></td>
+							</tr>
+							<tr>
+								<th>작성일</th>
+								<td><%=n.getRegDate()%></td>
+							</tr>
+							<tr>
+								<th>조회수</th>
+								<td><%=n.getHit()%></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<textarea row="80" cols="80" name="content"><%=n.getContent()%></textarea>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<div>
+						<input type="hidden" name="code" value="<%=code%>" />
+						<input type="submit" value="저장" />
+						<a href="notice-detail.jsp?c=<%=code%>">취소</a>
+					</div>
+				</form>
 			</main>
+
 		</div>
 	</div>
 

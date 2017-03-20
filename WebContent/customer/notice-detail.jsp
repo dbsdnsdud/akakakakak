@@ -7,7 +7,12 @@
     pageEncoding="UTF-8"%>
 
 <% 
-	
+	String code = request.getParameter("c");
+
+	NoticeDao noticeDao = new MySQLNoticeDao();
+	NoticeView n = noticeDao.get(code);
+	NoticeView prev = noticeDao.getPrev(code);
+	NoticeView next = noticeDao.getNext(code);
 %>    
     
 <!DOCTYPE html>
@@ -136,30 +141,49 @@
 					<tbody>
 						<tr>
 							<th>제목</th>
-							<td></td>
+							<td><%=n.getTitle()%></td>
 						</tr>
 						<tr>
 							<th>작성자</th>
-							<td></td>
+							<td><%=n.getWriter()%></td>
 						</tr>
 						<tr>
 							<th>작성일</th>
-							<td></td>
+							<td><%=n.getRegDate()%></td>
 						</tr>
 						<tr>
 							<th>조회수</th>
-							<td></td>
+							<td><%=n.getHit()%></td>
 						</tr>
 						<tr>
 							<td colspan="2">
+								<%=n.getContent()%>
 							</td>
 						</tr>
 					</tbody>
 				</table>
 				<div>
-					<input type="submit" value="등록" /> <a href="notice.jsp">취소</a>
+					<a href="notice.jsp">목록</a>
+					<a href="notice-edit.jsp?c=<%=n.getCode() %>">수정</a>
+					<a href="notice-del-proc.jsp?c=<%=n.getCode() %>">삭제</a>
 				</div>
 				
+				<div>
+					<ul>
+						<li>
+							<span>다음글:</span>
+							<%if(next == null){ %>
+							<span>다음글이 존재하지 않습니다.</span>
+							<%}else{ %>
+							<a href="?c=<%=next.getCode()%>"><%=next.getTitle()%></a>
+							<% } %>
+						</li>
+						<li>
+							<span>이전글:</span>
+							<a href="?c=<%=prev.getCode()%>"><%=prev.getTitle()%></a>
+						</li>
+					</ul>
+				</div>
 			</main>
 
 		</div>
